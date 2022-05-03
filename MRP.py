@@ -42,7 +42,7 @@ class MRP():
         s = requests.Session()
         rarity = []
         print(Fore.MAGENTA+WATERMARK)
-        print("A service by Localmod.",Fore.WHITE))
+        print("A service by Localmod.",Fore.WHITE)
         print(Fore.RED+f"NOTE: This will use dishes attached to your cards.", Fore.WHITE)
         print(Fore.MAGENTA+f"CONFIGURATIONS", Fore.WHITE)
         MRP.contract_length = int(input("CONTRACT_LENGTH: "))
