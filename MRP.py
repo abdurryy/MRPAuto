@@ -1,4 +1,8 @@
-import requests, math, time
+from shutil import ExecError
+import requests
+import math
+import time
+import uuid
 from colorama import init
 from colorama import Fore, Back, Style
 from datetime import datetime
@@ -9,15 +13,16 @@ class MRP():
     cooks_id=[]
     worker_card_id = ""
     api_key = ""
-    main_txt = "[MRPAUTO] | [MRP | Medium Rare Potatos] -> "
+    main_txt = "[MRPAuto] | [MRP | Medium Rare Potatos] -> "
     dishes = []
     restaurant_id = ""
     bot_delay = 60*4
-    p_bot_delay = 60*4 
+    p_bot_delay = 60*4 # default bot delay
     bot_wait = 30
     contract_length = 1
     contract_fee = "25"
     new_contract = False
+    webhook = ""
 
     # INITIALISATION -> WILL GET NECESSARY VALUES TO CONTINUE.
     def init():
@@ -34,7 +39,7 @@ class MRP():
             pass
         time = datetime.now()
         time = f" | {time.hour}:{time.minute}:{time.second}"
-        MRP.main_txt = f"[LOCALMOD:ing] {time} | [MRP | Medium Rare Potatos] -> "
+        MRP.main_txt = f"[MRPAuto] {time} | [MRP | Medium Rare Potatos] -> "
         MRP.next()
 
     # SETUP -> WILL SET CONFIGURATIONS BASED ON PREFERENCE.
@@ -48,6 +53,7 @@ class MRP():
         MRP.contract_length = int(input("CONTRACT_LENGTH: "))
         MRP.contract_fee = input("CONTRACT_FEE: ")
         MRP.api_key = input("API_KEY: ")
+        MRP.webhook = input("DISCORD_WEBHOOK: ")
         MRP.bot_wait = int(input("BOT_WAIT: "))
         try:
             r = s.get("https://game.medium-rare-potato.io/v1/user/characters/", headers={"api-key":MRP.api_key})
@@ -63,8 +69,8 @@ class MRP():
             MRP.cook_id = MRP.cooks_id[card_id]
             print(Fore.GREEN+MRP.main_txt+"PROCESS STARTING"+Fore.MAGENTA)
             MRP.init()
-        except:
-            print(Fore.RED+MRP.main_txt+f"FAILED TO FETCH CARDS.", Fore.WHITE)
+        except Exception as e:
+            print(Fore.RED+MRP.main_txt+f"FAILED TO FETCH CARDS.", Fore.WHITE, str(e))
             
     # GET TIME -> WILL DO SIMPLE MATH TO GET CURRENT STATE OF YOUR CARDS. 
     def get_time(obj):
@@ -106,7 +112,7 @@ class MRP():
     def get_restuarunt():
         try:
             s = requests.Session()
-            r = s.get(f"https://game.medium-rare-potato.io/v1/restaurants/?search=&fee={MRP.contract_fee}&min_staff_rating=&rating=&sort=&rarity=RARITY_RAW&status=RESTAURANT_STATUS_OPENED&is_chef_exist=&is_free_slot_exist=true", headers={"api-key":MRP.api_key})
+            r = s.get(f"https://game.medium-rare-potato.io/v1/restaurants/?search=&fee={MRP.contract_fee}&min_staff_rating=0&rating=&sort=&rarity=RARITY_RAW&status=RESTAURANT_STATUS_OPENED&is_chef_exist=&is_free_slot_exist=true", headers={"api-key":MRP.api_key})
             j = r.json()["restaurant_list"]
             c_restaurant = ""
             c_fee = 100
@@ -116,13 +122,14 @@ class MRP():
                 if restaurant["fee"] < c_fee:
                     c_restaurant = restaurant["id"]
                     c_fee = restaurant["fee"]
-            data = {"worker_card_id":MRP.cook_id,"days_duration":MRP.contract_length}
-            r = s.post(f"https://game.medium-rare-potato.io/v1/restaurants/{c_restaurant}/set-worker/", headers={"api-key":MRP.api_key}, json=data)
-            print(r.json())
+            
+            data = {"worker_card_id":str(MRP.worker_card_id),"days_duration":int(MRP.contract_length)}
+            r = s.post(f"https://game.medium-rare-potato.io/v1/restaurants/{uuid.UUID(c_restaurant)}/set-worker/", headers={"api-key":MRP.api_key}, json=data)
             MRP.new_contract = True
             return True,c_restaurant,c_fee
-        except:
-            return False,""
+        except Exception as e:
+            print(str(e))
+            return False,"", ""
     
     # START COOKING -> STARTING COOKING PROCESS.
     def start_cooking():
@@ -145,30 +152,30 @@ class MRP():
                 MRP.start_cooking()
                 MRP.bot_delay = (3600*3)+MRP.bot_wait
                 print(MRP.main_txt+"COOKING DISH/ES", " | NEED TO WAIT",str(3600*3)+"s")
-                requests.post("https://discordapp.com/api/webhooks/970420437978873886/jOjFNqnd0Q357xRJTBWukhBGSBVUt5roztuFEu6UULocSxvQThiv3olmriYmkaj1GbPX", json={"content":MRP.main_txt+"COOKING DISH/ES | NEED TO WAIT "+str(3600*3)+"s"})
+                requests.post(f"https://discordapp.com/api/webhooks/{MRP.webhook}/jOjFNqnd0Q357xRJTBWukhBGSBVUt5roztuFEu6UULocSxvQThiv3olmriYmkaj1GbPX", json={"content":MRP.main_txt+"COOKING DISH/ES | NEED TO WAIT "+str(3600*3)+"s"})
             else:
                 if can_cook == False:
                     MRP.bot_delay = cook_time_left+MRP.bot_wait
                     print(MRP.main_txt+"ALREADY COOKING", " | NEED TO WAIT", str(round(cook_time_left,2))+"s")
-                    requests.post("https://discordapp.com/api/webhooks/970420437978873886/jOjFNqnd0Q357xRJTBWukhBGSBVUt5roztuFEu6UULocSxvQThiv3olmriYmkaj1GbPX", json={"content":MRP.main_txt+"ALREADY COOKING | NEED TO WAIT " +str(round(cook_time_left,2))+"s"})
+                    requests.post(f"https://discordapp.com/api/webhooks/{MRP.webhook}/jOjFNqnd0Q357xRJTBWukhBGSBVUt5roztuFEu6UULocSxvQThiv3olmriYmkaj1GbPX", json={"content":MRP.main_txt+"ALREADY COOKING | NEED TO WAIT " +str(round(cook_time_left,2))+"s"})
                 elif is_work_session == False:
                     MRP.bot_delay = rest_time_left*(-1)+MRP.bot_wait
                     print(MRP.main_txt+"CURRENTLY RESTING", " | NEED TO WAIT", str(round(rest_time_left*(-1),2))+"s")
-                    requests.post("https://discordapp.com/api/webhooks/970420437978873886/jOjFNqnd0Q357xRJTBWukhBGSBVUt5roztuFEu6UULocSxvQThiv3olmriYmkaj1GbPX", json={"content":MRP.main_txt+"CURRENTLY RESTING | NEED TO WAIT "+str(round(rest_time_left*(-1),2))+"s"})
+                    requests.post(f"https://discordapp.com/api/webhooks/{MRP.webhook}/jOjFNqnd0Q357xRJTBWukhBGSBVUt5roztuFEu6UULocSxvQThiv3olmriYmkaj1GbPX", json={"content":MRP.main_txt+"CURRENTLY RESTING | NEED TO WAIT "+str(round(rest_time_left*(-1),2))+"s"})
         except:
             if is_work_session == False:
                 MRP.bot_delay = rest_time_left*(-1)+MRP.bot_wait
                 print(MRP.main_txt+"CURRENTLY RESTING", " | NEED TO WAIT", str(round(rest_time_left*(-1),2))+"s")
-                requests.post("https://discordapp.com/api/webhooks/970420437978873886/jOjFNqnd0Q357xRJTBWukhBGSBVUt5roztuFEu6UULocSxvQThiv3olmriYmkaj1GbPX", json={"content":MRP.main_txt+"CURRENTLY RESTING | NEED TO WAIT "+str(round(rest_time_left*(-1),2))+"s"})
+                requests.post(f"https://discordapp.com/api/webhooks/{MRP.webhook}/jOjFNqnd0Q357xRJTBWukhBGSBVUt5roztuFEu6UULocSxvQThiv3olmriYmkaj1GbPX", json={"content":MRP.main_txt+"CURRENTLY RESTING | NEED TO WAIT "+str(round(rest_time_left*(-1),2))+"s"})
             elif has_contract == False:
                 x,y,z = MRP.get_restuarunt()
                 if x == True:
                     s = MRP.main_txt+"NEW CONTRACT"," | ID | "+y+" | FEE | "+str(z)+" | SLEEP "+ str(MRP.bot_delay)+"s"
-                    requests.post("https://discordapp.com/api/webhooks/970420437978873886/jOjFNqnd0Q357xRJTBWukhBGSBVUt5roztuFEu6UULocSxvQThiv3olmriYmkaj1GbPX", json={"content":s})
+                    requests.post(f"https://discordapp.com/api/webhooks/{MRP.webhook}/jOjFNqnd0Q357xRJTBWukhBGSBVUt5roztuFEu6UULocSxvQThiv3olmriYmkaj1GbPX", json={"content":s})
                     print(MRP.main_txt+"NEW CONTRACT"," | ID | "+y+" | FEE | "+str(z)+" | SLEEP "+ str(MRP.bot_delay)+"s")
                 else:
                     s = MRP.main_txt+"SEARCHING CONTRACT"
-                    requests.post("https://discordapp.com/api/webhooks/970420437978873886/jOjFNqnd0Q357xRJTBWukhBGSBVUt5roztuFEu6UULocSxvQThiv3olmriYmkaj1GbPX", json={"content":s})
+                    requests.post(f"https://discordapp.com/api/webhooks/{MRP.webhook}/jOjFNqnd0Q357xRJTBWukhBGSBVUt5roztuFEu6UULocSxvQThiv3olmriYmkaj1GbPX", json={"content":s})
                     print(Fore.RED+MRP.main_txt+"SEARCHING CONTRACT"+Fore.MAGENTA)
         time.sleep(5)
         print(MRP.main_txt+"SLEEPING FOR", str(MRP.bot_delay)+"s")
