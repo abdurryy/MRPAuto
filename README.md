@@ -1,6 +1,6 @@
 # MRPAuto 
 
-Providing ["Medium Rare Potato"](https//medium-rare-potato.io/) players around the globe a fast and secure Python game automation.
+Providing ["Medium Rare Potato"](https//medium-rare-potato.io/) players around the globe a fast and secure Python game automation solution.
 
 ## Why did I create this?
 Not having to deal with clicking every few hours while earning a passive income with NFT games is deal breaker for me and since there isn't something such as that. Why not take a game and automate it?
