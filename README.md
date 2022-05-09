@@ -1,4 +1,4 @@
-# MRPAuto 
+# MRPAuto - Medium Rare Potato Automation/Bot/Script
 
 Providing ["Medium Rare Potato"](https//medium-rare-potato.io/) players around the globe a fast and secure Python game automation solution.
 
