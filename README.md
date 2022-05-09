@@ -2,6 +2,9 @@
 
 Providing "Medium Rare Potato" players around the globe a fast and secure Python game automation.
 
+## Why did I create this?
+Not having to deal with clicking every few hours while earning a passive income with NFT games is deal breaker for me and since there isn't something such as that. Why not take a game and automate it?
+
 ## Setup
 ### ..with Python.
 1. Download latest Python: https://www.python.org/
