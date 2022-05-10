@@ -1,5 +1,5 @@
 # MRPAuto - Medium Rare Potato Automation/Bot/Script
-Providing ["Medium Rare Potato"](https//medium-rare-potato.io/) players around the globe a fast and secure Python game automation solution.
+Providing ["Medium Rare Potato"](https//medium-rare-potato.io/) players around the globe a fast and secure Python game automation/bot/script solution.
 
 _If you have any issues feel free to join [Our Discord](https://discord.gg/EsV8EMGpn7)!_
 
