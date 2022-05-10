@@ -152,30 +152,30 @@ class MRP():
                 MRP.start_cooking()
                 MRP.bot_delay = (3600*3)+MRP.bot_wait
                 print(MRP.main_txt+"COOKING DISH/ES", " | NEED TO WAIT",str(3600*3)+"s")
-                requests.post(f"https://discordapp.com/api/webhooks/{MRP.webhook}/jOjFNqnd0Q357xRJTBWukhBGSBVUt5roztuFEu6UULocSxvQThiv3olmriYmkaj1GbPX", json={"content":MRP.main_txt+"COOKING DISH/ES | NEED TO WAIT "+str(3600*3)+"s"})
+                requests.post(f"{MRP.webhook}", json={"content":MRP.main_txt+"COOKING DISH/ES | NEED TO WAIT "+str(3600*3)+"s"})
             else:
                 if can_cook == False:
                     MRP.bot_delay = cook_time_left+MRP.bot_wait
                     print(MRP.main_txt+"ALREADY COOKING", " | NEED TO WAIT", str(round(cook_time_left,2))+"s")
-                    requests.post(f"https://discordapp.com/api/webhooks/{MRP.webhook}/jOjFNqnd0Q357xRJTBWukhBGSBVUt5roztuFEu6UULocSxvQThiv3olmriYmkaj1GbPX", json={"content":MRP.main_txt+"ALREADY COOKING | NEED TO WAIT " +str(round(cook_time_left,2))+"s"})
+                    requests.post(f"{MRP.webhook}", json={"content":MRP.main_txt+"ALREADY COOKING | NEED TO WAIT " +str(round(cook_time_left,2))+"s"})
                 elif is_work_session == False:
                     MRP.bot_delay = rest_time_left*(-1)+MRP.bot_wait
                     print(MRP.main_txt+"CURRENTLY RESTING", " | NEED TO WAIT", str(round(rest_time_left*(-1),2))+"s")
-                    requests.post(f"https://discordapp.com/api/webhooks/{MRP.webhook}/jOjFNqnd0Q357xRJTBWukhBGSBVUt5roztuFEu6UULocSxvQThiv3olmriYmkaj1GbPX", json={"content":MRP.main_txt+"CURRENTLY RESTING | NEED TO WAIT "+str(round(rest_time_left*(-1),2))+"s"})
+                    requests.post(f"{MRP.webhook}", json={"content":MRP.main_txt+"CURRENTLY RESTING | NEED TO WAIT "+str(round(rest_time_left*(-1),2))+"s"})
         except:
             if is_work_session == False:
                 MRP.bot_delay = rest_time_left*(-1)+MRP.bot_wait
                 print(MRP.main_txt+"CURRENTLY RESTING", " | NEED TO WAIT", str(round(rest_time_left*(-1),2))+"s")
-                requests.post(f"https://discordapp.com/api/webhooks/{MRP.webhook}/jOjFNqnd0Q357xRJTBWukhBGSBVUt5roztuFEu6UULocSxvQThiv3olmriYmkaj1GbPX", json={"content":MRP.main_txt+"CURRENTLY RESTING | NEED TO WAIT "+str(round(rest_time_left*(-1),2))+"s"})
+                requests.post(f"{MRP.webhook}", json={"content":MRP.main_txt+"CURRENTLY RESTING | NEED TO WAIT "+str(round(rest_time_left*(-1),2))+"s"})
             elif has_contract == False:
                 x,y,z = MRP.get_restuarunt()
                 if x == True:
                     s = MRP.main_txt+"NEW CONTRACT"," | ID | "+y+" | FEE | "+str(z)+" | SLEEP "+ str(MRP.bot_delay)+"s"
-                    requests.post(f"https://discordapp.com/api/webhooks/{MRP.webhook}/jOjFNqnd0Q357xRJTBWukhBGSBVUt5roztuFEu6UULocSxvQThiv3olmriYmkaj1GbPX", json={"content":s})
+                    requests.post(f"{MRP.webhook}", json={"content":s})
                     print(MRP.main_txt+"NEW CONTRACT"," | ID | "+y+" | FEE | "+str(z)+" | SLEEP "+ str(MRP.bot_delay)+"s")
                 else:
                     s = MRP.main_txt+"SEARCHING CONTRACT"
-                    requests.post(f"https://discordapp.com/api/webhooks/{MRP.webhook}/jOjFNqnd0Q357xRJTBWukhBGSBVUt5roztuFEu6UULocSxvQThiv3olmriYmkaj1GbPX", json={"content":s})
+                    requests.post(f"{MRP.webhook}", json={"content":s})
                     print(Fore.RED+MRP.main_txt+"SEARCHING CONTRACT"+Fore.MAGENTA)
         time.sleep(5)
         print(MRP.main_txt+"SLEEPING FOR", str(MRP.bot_delay)+"s")
